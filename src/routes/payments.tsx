@@ -111,7 +111,9 @@ function PaymentsPage() {
         </div>
         <Select value={status} onValueChange={(v) => setStatus(v as typeof status)}>
           <SelectTrigger className="w-40">
-            <SelectValue />
+            <SelectValue placeholder="All statuses">
+              {status === "all" ? "All statuses" : status[0]!.toUpperCase() + status.slice(1)}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All statuses</SelectItem>
