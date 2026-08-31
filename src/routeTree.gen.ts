@@ -10,11 +10,41 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PaymentsRouteImport } from './routes/payments'
+import { Route as ReferRouteImport } from './routes/refer'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SubscriptionRouteImport } from './routes/subscription'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as ServicesServiceIdRouteImport } from './routes/services.$serviceId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentsRoute = PaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReferRoute = ReferRouteImport.update({
+  id: '/refer',
+  path: '/refer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubscriptionRoute = SubscriptionRouteImport.update({
+  id: '/subscription',
+  path: '/subscription',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesServiceIdRoute = ServicesServiceIdRouteImport.update({
@@ -25,27 +55,69 @@ const ServicesServiceIdRoute = ServicesServiceIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/payments': typeof PaymentsRoute
+  '/refer': typeof ReferRoute
+  '/settings': typeof SettingsRoute
+  '/subscription': typeof SubscriptionRoute
+  '/support': typeof SupportRoute
   '/services/$serviceId': typeof ServicesServiceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/payments': typeof PaymentsRoute
+  '/refer': typeof ReferRoute
+  '/settings': typeof SettingsRoute
+  '/subscription': typeof SubscriptionRoute
+  '/support': typeof SupportRoute
   '/services/$serviceId': typeof ServicesServiceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/payments': typeof PaymentsRoute
+  '/refer': typeof ReferRoute
+  '/settings': typeof SettingsRoute
+  '/subscription': typeof SubscriptionRoute
+  '/support': typeof SupportRoute
   '/services/$serviceId': typeof ServicesServiceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/services/$serviceId'
+  fullPaths:
+    | '/'
+    | '/payments'
+    | '/refer'
+    | '/settings'
+    | '/subscription'
+    | '/support'
+    | '/services/$serviceId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/services/$serviceId'
-  id: '__root__' | '/' | '/services/$serviceId'
+  to:
+    | '/'
+    | '/payments'
+    | '/refer'
+    | '/settings'
+    | '/subscription'
+    | '/support'
+    | '/services/$serviceId'
+  id:
+    | '__root__'
+    | '/'
+    | '/payments'
+    | '/refer'
+    | '/settings'
+    | '/subscription'
+    | '/support'
+    | '/services/$serviceId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PaymentsRoute: typeof PaymentsRoute
+  ReferRoute: typeof ReferRoute
+  SettingsRoute: typeof SettingsRoute
+  SubscriptionRoute: typeof SubscriptionRoute
+  SupportRoute: typeof SupportRoute
   ServicesServiceIdRoute: typeof ServicesServiceIdRoute
 }
 
@@ -56,6 +128,41 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payments': {
+      id: '/payments'
+      path: '/payments'
+      fullPath: '/payments'
+      preLoaderRoute: typeof PaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refer': {
+      id: '/refer'
+      path: '/refer'
+      fullPath: '/refer'
+      preLoaderRoute: typeof ReferRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subscription': {
+      id: '/subscription'
+      path: '/subscription'
+      fullPath: '/subscription'
+      preLoaderRoute: typeof SubscriptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/services/$serviceId': {
@@ -70,6 +177,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PaymentsRoute: PaymentsRoute,
+  ReferRoute: ReferRoute,
+  SettingsRoute: SettingsRoute,
+  SubscriptionRoute: SubscriptionRoute,
+  SupportRoute: SupportRoute,
   ServicesServiceIdRoute: ServicesServiceIdRoute,
 }
 export const routeTree = rootRouteImport
