@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Check, Eye, EyeOff } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -97,6 +97,6 @@ function Field({ label, id, type = "text", placeholder }: { label: string; id: s
   return <div><Label htmlFor={id}>{label}</Label><Input className="mt-2" id={id} type={type} placeholder={placeholder} required /></div>;
 }
 
-function AuthFrame({ children }: { children: React.ReactNode }) {
+function AuthFrame({ children }: { children: ReactNode }) {
   return <main className="min-h-screen bg-surface"><header className="mx-auto flex h-20 max-w-[1240px] items-center border-b border-border px-6 lg:px-10"><BrandMark /></header><div className="flex min-h-[calc(100vh-5rem)] items-center justify-center bg-background px-6 py-14">{children}</div></main>;
 }
