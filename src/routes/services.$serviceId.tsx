@@ -1,14 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, Check, Copy, Eye, EyeOff, RefreshCw, ShieldCheck } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowLeft, Check, ChevronDown, Copy, LoaderCircle } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/bundler/AppShell";
-import { ServiceLogo } from "@/components/bundler/ServiceLogo";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useBundler, type ServiceId } from "@/lib/bundler-store";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useBundler, type Service, type ServiceId } from "@/lib/bundler-store";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/services/$serviceId")({
   head: ({ params }) => {
@@ -16,15 +25,9 @@ export const Route = createFileRoute("/services/$serviceId")({
     return {
       meta: [
         { title: `${name} sign-in details — Bundler` },
-        {
-          name: "description",
-          content: `View your shared ${name} email, password, profile and generate a one-time sign-in code.`,
-        },
+        { name: "description", content: `Access your ${name} sign-in details through Bundler.` },
         { property: "og:title", content: `${name} sign-in details — Bundler` },
-        {
-          property: "og:description",
-          content: `Secure ${name} credentials and OTP generation inside your Bundler account.`,
-        },
+        { property: "og:description", content: `Access your ${name} sign-in details through Bundler.` },
         { property: "og:type", content: "website" },
         { name: "twitter:card", content: "summary_large_image" },
       ],
@@ -33,195 +36,227 @@ export const Route = createFileRoute("/services/$serviceId")({
   component: ServicePage,
 });
 
-function CopyRow({ label, value, secret }: { label: string; value: string; secret?: boolean }) {
-  const [shown, setShown] = useState(!secret);
-  const [copied, setCopied] = useState(false);
-
+function PageTitle() {
   return (
-    <div className="flex items-center gap-3 px-5 py-4">
-      <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold uppercase text-muted-foreground">
-          {label}
-        </p>
-        <p className="mt-0.5 truncate font-mono text-sm font-semibold">
-          {shown ? value : "•".repeat(Math.min(value.length, 16))}
-        </p>
-      </div>
-      {secret && (
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label={shown ? `Hide ${label}` : `Show ${label}`}
-          onClick={() => setShown((s) => !s)}
-        >
-          {shown ? <EyeOff /> : <Eye />}
-        </Button>
-      )}
-      <Button
-        variant="outline"
-        size="sm"
-        className="gap-1.5"
-        onClick={async () => {
-          try {
-            await navigator.clipboard.writeText(value);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1500);
-            toast.success(`${label} copied`);
-          } catch {
-            toast.error("Copy failed", { description: "Your browser blocked clipboard access." });
-          }
-        }}
-      >
-        {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-        {copied ? "Copied" : "Copy"}
+    <div className="flex items-center gap-5">
+      <Button asChild variant="ghost" size="icon" className="-ml-2 size-7" aria-label="Back to home">
+        <Link to="/"><ArrowLeft className="size-5" /></Link>
       </Button>
+      <h1 className="font-display text-[22px] font-semibold leading-none lg:text-[26px]">Get Sign-in Details</h1>
     </div>
   );
 }
 
-function ServicePage() {
-  const { serviceId } = Route.useParams();
-  const { state, generateOtp } = useBundler();
-  const service = state.services.find((s) => s.id === (serviceId as ServiceId));
-  const [now, setNow] = useState(Date.now());
-  const familyService = serviceId === "spotify" || serviceId === "youtube-premium";
-  const [familyStep, setFamilyStep] = useState<"choice" | "new" | "current" | "sent" | "details">("choice");
-  const [familyEmail, setFamilyEmail] = useState("");
-  const [familyPassword, setFamilyPassword] = useState("");
-
-  useEffect(() => {
-    const t = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(t);
-  }, []);
-
-  if (!service) {
-    return (
-      <AppShell>
-        <div className="panel mx-auto max-w-lg p-8 text-center">
-          <h1 className="font-display text-2xl font-semibold">Service not found</h1>
-          <p className="mt-2 text-sm text-muted-foreground">This streaming service is not included in your bundle.</p>
-          <Button asChild className="mt-6"><Link to="/">Return home</Link></Button>
-        </div>
-      </AppShell>
-    );
+async function copyValue(value: string, label: string) {
+  try {
+    await navigator.clipboard.writeText(value);
+    toast.success(`${label} copied`);
+  } catch {
+    toast.error("Copy failed", { description: "Your browser blocked clipboard access." });
   }
+}
 
-  const otp = state.otps[service.id];
-  const secondsLeft = otp ? Math.max(0, Math.ceil((otp.expiresAt - now) / 1000)) : 0;
-  const otpValid = Boolean(otp) && secondsLeft > 0;
+function LoginDetails({ service }: { service: Service }) {
+  return (
+    <section className="overflow-hidden rounded-lg bg-surface">
+      <h2 className="px-6 pb-5 pt-7 font-display text-base font-semibold lg:px-9 lg:pb-6 lg:pt-9 lg:text-lg">Your login details</h2>
+      <div className="border-t border-border px-6 lg:px-9">
+        <div className="grid gap-2 border-b border-border py-5 sm:grid-cols-[120px_1fr] sm:items-center">
+          <p className="text-base text-muted-foreground">Username</p>
+          <div className="flex min-w-0 items-center gap-4">
+            <p className="min-w-0 flex-1 truncate text-base text-service-detail">{service.email}</p>
+            <Button variant="link" className="h-auto shrink-0 px-0 text-base font-normal" onClick={() => copyValue(service.email, "Username")}>Copy</Button>
+          </div>
+        </div>
+        <div className="grid gap-2 py-5 sm:grid-cols-[120px_1fr] sm:items-center">
+          <p className="text-base text-muted-foreground">Password</p>
+          <div className="flex min-w-0 items-center gap-4">
+            <p className="min-w-0 flex-1 truncate text-base text-service-detail">{service.password}</p>
+            <Button variant="link" className="h-auto shrink-0 px-0 text-base font-normal" onClick={() => copyValue(service.password, "Password")}>Copy</Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
-  if (familyService && familyStep !== "details") {
-    const youtube = serviceId === "youtube-premium";
-    return (
-      <AppShell>
-        <h1 className="font-display text-[26px] font-semibold">Get Sign-in Details</h1>
-        <section className="mt-8 max-w-[700px]">
-          {familyStep === "choice" && <>
-            <h2 className="font-display text-xl font-semibold">Request to be added to {youtube ? "YouTube " : "the "}family plan</h2>
-            <p className="mt-3 text-sm text-muted-foreground">Kindly choose an option to submit your details to be added to the family plan. <button className="font-semibold text-primary">Learn more</button></p>
-            <div className="mt-8 grid gap-5 sm:grid-cols-2">
-              <button onClick={() => setFamilyStep("new")} className="panel group min-h-44 p-6 text-left ring-1 ring-border transition hover:ring-primary"><span className="flex size-8 items-center justify-center rounded-full bg-secondary text-sm font-semibold">01</span><p className="mt-5 text-sm text-muted-foreground">Submit a new {youtube ? "gmail" : "email"} not registered with {youtube ? "YouTube" : "Spotify"}</p><ArrowRight className="ml-auto mt-4 size-5 text-primary" /></button>
-              <button onClick={() => setFamilyStep("current")} className="panel group min-h-44 p-6 text-left ring-1 ring-border transition hover:ring-primary"><span className="flex size-8 items-center justify-center rounded-full bg-secondary text-sm font-semibold">02</span><p className="mt-5 text-sm text-muted-foreground">Submit login details to your current {youtube ? "gmail" : "Spotify"} account</p><ArrowRight className="ml-auto mt-4 size-5 text-primary" /></button>
-            </div>
-            <p className="mt-8 text-sm text-muted-foreground">Not sure of what option to choose? <Link to="/support" className="font-semibold text-primary">Speak to Support</Link></p>
-          </>}
-          {(familyStep === "new" || familyStep === "current") && <form className="panel p-6 sm:p-10" onSubmit={(e) => { e.preventDefault(); setFamilyStep("sent"); }}>
-            <h2 className="font-display text-xl font-semibold">{familyStep === "new" ? "Submit New Login Details" : `Submit current ${youtube ? "YouTube" : "Spotify"} login details`}</h2>
-            <p className="mt-2 text-sm text-muted-foreground">Kindly submit {familyStep === "new" ? `a new ${youtube ? "Google" : "email"} address` : "your current login details"} to be added to the family plan.</p>
-            <div className="mt-6 space-y-4"><div><Label htmlFor="family-email">{familyStep === "new" ? "New Email Address" : "Email Address"}</Label><Input id="family-email" type="email" required value={familyEmail} onChange={e => setFamilyEmail(e.target.value)} /></div><div><Label htmlFor="family-password">{familyStep === "new" ? "Preferred Password" : "Password"}</Label><Input id="family-password" type="password" required value={familyPassword} onChange={e => setFamilyPassword(e.target.value)} /></div></div>
-            <div className="mt-6 flex gap-3"><Button type="button" variant="outline" onClick={() => setFamilyStep("choice")}>Back</Button><Button type="submit">Submit</Button></div>
-          </form>}
-          {familyStep === "sent" && <div className="panel p-8 text-center sm:p-12"><span className="mx-auto flex size-12 items-center justify-center rounded-full bg-success/15 text-success"><Check /></span><h2 className="mt-5 font-display text-xl font-semibold">Request Sent</h2><p className="mx-auto mt-3 max-w-lg text-sm text-muted-foreground">You have submitted your details successfully. You will be added to the family plan soon and you will get a confirmation email.</p><div className="mt-6 flex justify-center gap-3"><Button variant="outline" onClick={() => setFamilyStep("current")}>Change Details</Button><Button onClick={() => setFamilyStep("details")}>Okay</Button></div></div>}
-        </section>
-      </AppShell>
-    );
+const netflixTravelSteps = [
+  <>Click on <strong>“I'm Traveling” / “Watch Temporarily”</strong> to obtain a verification link here.</>,
+  <>Click the <strong>“Send Email”</strong> button on device, and Bundler will collect the email for you.</>,
+  <>Come back to this page and click the <strong>“Get Login Verification Link”</strong> button to obtain the verification link. Link may take up to 4 minutes.</>,
+  <>Click <strong>“Open link to view verification code”</strong> after successfully obtaining the verification link.</>,
+  <>Enter verification code into your TV or device to continue enjoying Netflix!</>,
+  <>Repeat the whole steps in few minutes or <Link to="/support" className="text-primary">“speak to support”</Link> if the link is yet to be obtained.</>,
+];
+
+const netflixHouseholdSteps = [
+  <>Click <strong>“Update My Netflix Household”</strong> to obtain a verification link.</>,
+  <>Click the <strong>“Send Email”</strong> button on device, and Bundler will collect the email for you.</>,
+  <>Come back to this page and click the <strong>“Get Login Verification Link”</strong> button to obtain the verification link. Link may take up to 4 minutes.</>,
+  <>Click <strong>“Open link to view verification code”</strong> after successfully obtaining the verification link.</>,
+  <>Click <strong>“Update your Netflix household”</strong> on the webpage.</>,
+  <>Repeat the whole steps in few minutes or <Link to="/support" className="text-primary">“speak to support”</Link> if the link is yet to be obtained.</>,
+];
+
+function NetflixVerification() {
+  const [openSection, setOpenSection] = useState<"travel" | "household" | null>(null);
+  const [requestState, setRequestState] = useState<"idle" | "loading" | "ready">("idle");
+  const steps = openSection === "travel" ? netflixTravelSteps : netflixHouseholdSteps;
+
+  function requestLink() {
+    setRequestState("loading");
+    window.setTimeout(() => setRequestState("ready"), 1100);
   }
 
   return (
-    <AppShell>
-      <Link
-        to="/"
-        className="mb-5 inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="size-4" /> Back to dashboard
-      </Link>
+    <section className="rounded-lg bg-surface p-6 lg:p-9">
+      <h2 className="font-display text-base font-semibold lg:text-lg">Get Login Verification Link</h2>
+      <p className="mt-7 max-w-[709px] text-sm leading-6 text-muted-foreground">
+        You may encounter the message <strong className="font-medium text-foreground">“This TV/device is not part of the household”</strong> upon login to your Netflix account, don’t worry, follow these steps to regain access through the verification link:
+      </p>
 
-      <div className="mb-6 flex items-center gap-4">
-        <ServiceLogo service={service} className="size-14 text-base" />
-        <div>
-          <h1 className="font-display text-[26px] font-semibold leading-9">{service.name}</h1>
-          <p className="text-sm text-muted-foreground">{service.tagline}</p>
-        </div>
+      <div className="mt-6 border-y border-border">
+        <Button variant="ghost" className="h-auto w-full justify-between whitespace-normal rounded-none px-0 py-5 text-left text-sm font-medium lg:text-base" onClick={() => setOpenSection(openSection === "travel" ? null : "travel")}>
+          <span>My TV/Device have ‘I'm Traveling’ or ‘Watch Temporarily’</span>
+          <ChevronDown className={cn("size-5 shrink-0 transition-transform", openSection === "travel" && "rotate-180 text-primary")} />
+        </Button>
+        {openSection === "travel" && <NetflixSteps intro="If your Netflix login verification screen have 'I'm Traveling' or 'Watch Temporarily', kindly follow these steps to regain access:" steps={steps} requestState={requestState} onRequest={requestLink} />}
       </div>
 
-      <section className="panel divide-y overflow-hidden">
-        <CopyRow label="Email" value={service.email} />
-        <CopyRow label="Password" value={service.password} secret />
-        <CopyRow label="Profile" value={service.profile} />
-        <CopyRow label="Profile PIN" value={service.pin} secret />
-      </section>
+      <div className="border-b border-border">
+        <Button variant="ghost" className="h-auto w-full justify-between whitespace-normal rounded-none px-0 py-5 text-left text-sm font-medium lg:text-base" onClick={() => setOpenSection(openSection === "household" ? null : "household")}>
+          <span>My TV/device doesn’t have 'I'm Traveling' or 'Watch Temporarily'</span>
+          <ChevronDown className={cn("size-5 shrink-0 transition-transform", openSection === "household" && "rotate-180 text-primary")} />
+        </Button>
+        {openSection === "household" && <NetflixSteps intro="If your Netflix login verification screen does not have 'I'm Traveling' or 'Watch Temporarily', kindly follow these steps to regain access:" steps={steps} requestState={requestState} onRequest={requestLink} />}
+      </div>
+    </section>
+  );
+}
 
-      {service.supportsOtp && (
-        <section className="panel mt-6 p-6">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="size-5 text-primary" />
-            <h2 className="font-display text-lg font-semibold">One-time sign-in code</h2>
-          </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {service.name} sends a verification code to the shared inbox. Generate it here — codes
-            expire after 2 minutes.
-          </p>
+function NetflixSteps({ intro, steps, requestState, onRequest }: { intro: string; steps: React.ReactNode[]; requestState: "idle" | "loading" | "ready"; onRequest: () => void }) {
+  return (
+    <div className="border-t border-border pb-7 pl-6 pt-5 lg:pl-[42px]">
+      <p className="max-w-[709px] text-sm leading-6 text-muted-foreground">{intro}</p>
+      <ol className="mt-6 space-y-5">
+        {steps.map((step, index) => <li key={index}><p className="text-base font-medium text-primary">Step {index + 1}:</p><p className="mt-2 max-w-[690px] text-sm leading-6 text-muted-foreground">{step}</p></li>)}
+      </ol>
+      <Button className="mt-7 h-14 w-full text-base" disabled={requestState === "loading"} onClick={onRequest}>
+        {requestState === "loading" && <LoaderCircle className="animate-spin" />}
+        {requestState === "loading" ? "Requesting link, kindly wait..." : requestState === "ready" ? "Open the link to view the verification code" : "Get Login Verification Link"}
+      </Button>
+      {requestState === "ready" && <div className="mt-5 flex items-center gap-4"><a href="https://www.netflix.com/account/travel" target="_blank" rel="noreferrer" className="truncate text-sm text-primary">www.netflix.com/account/travel...</a><Button variant="link" className="h-auto px-0 text-base font-normal" onClick={() => copyValue("https://www.netflix.com/account/travel", "Link")}>Copy</Button></div>}
+    </div>
+  );
+}
 
-          {otpValid ? (
-            <div className="mt-5 flex flex-wrap items-center gap-4">
-              <div className="flex gap-2">
-                {otp!.code.split("").map((d, i) => (
-                  <span
-                    key={i}
-                    className="flex size-12 items-center justify-center rounded-lg bg-secondary text-xl font-semibold"
-                  >
-                    {d}
-                  </span>
-                ))}
-              </div>
-              <p className="text-sm font-semibold text-muted-foreground">
-                Expires in {String(Math.floor(secondsLeft / 60)).padStart(2, "0")}:
-                {String(secondsLeft % 60).padStart(2, "0")}
-              </p>
-              <Button
-                variant="outline"
-                className="gap-2"
-                onClick={async () => {
-                  await navigator.clipboard.writeText(otp!.code).catch(() => {});
-                  toast.success("Code copied");
-                }}
-              >
-                <Copy className="size-4" /> Copy code
-              </Button>
-            </div>
-          ) : (
-            <Button
-              className="mt-5 gap-2"
-              onClick={() => {
-                generateOtp(service.id);
-                toast.success(`New ${service.name} code generated`);
-              }}
-            >
-              <RefreshCw className="size-4" />
-              {otp ? "Generate a new code" : "Generate OTP"}
-            </Button>
-          )}
-        </section>
-      )}
+function OtpRequest({ service }: { service: Service }) {
+  const { state, generateOtp } = useBundler();
+  const [channel, setChannel] = useState("email");
+  const [loading, setLoading] = useState(false);
+  const otp = state.otps[service.id];
 
-      <section className="panel mt-6 p-6">
-        <h2 className="font-display text-lg font-semibold">House rules</h2>
-        <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-          <li>• Only use the profile assigned to you — others are reserved for the bundle.</li>
-          <li>• Never change the account email, password or payment details.</li>
-          <li>• Passwords rotate monthly; come back here for the latest one.</li>
-        </ul>
-      </section>
+  function requestCode() {
+    if (channel === "phone") {
+      toast.info("Contact Support to get OTP from Phone No.");
+      return;
+    }
+    setLoading(true);
+    window.setTimeout(() => {
+      generateOtp(service.id);
+      setLoading(false);
+    }, 900);
+  }
+
+  return (
+    <section className="rounded-lg bg-surface p-6 lg:p-9">
+      <h2 className="font-display text-base font-semibold lg:text-lg">Request OTP</h2>
+      <RadioGroup value={channel} onValueChange={setChannel} className="mt-6 gap-5">
+        <label className="flex cursor-pointer items-center gap-3 text-sm text-muted-foreground"><RadioGroupItem value="email" />Request OTP from Email Address</label>
+        <label className="flex cursor-pointer items-center gap-3 text-sm text-muted-foreground"><RadioGroupItem value="phone" />Request OTP from Phone Number</label>
+      </RadioGroup>
+      <Button className="mt-8 h-14 w-full text-base" onClick={requestCode} disabled={loading}>
+        {loading && <LoaderCircle className="animate-spin" />}
+        {loading ? "Requesting code, kindly wait..." : channel === "phone" ? "Contact Support to get OTP from Phone No." : "Send Request"}
+      </Button>
+      {otp && <div className="mt-5 flex items-center gap-5"><span className="font-display text-xl font-semibold">{otp.code}</span><Button variant="link" className="h-auto px-0 text-base font-normal" onClick={() => copyValue(otp.code, "OTP")}>Copy</Button></div>}
+    </section>
+  );
+}
+
+function FamilyFlow({ service }: { service: Service }) {
+  const youtube = service.id === "youtube-premium";
+  const [step, setStep] = useState<"choice" | "new" | "current" | "sent" | "details">("choice");
+  const [lastForm, setLastForm] = useState<"new" | "current">("new");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [learnOpen, setLearnOpen] = useState(false);
+
+  const choiceTitle = youtube ? "Request to be added to YouTube family plan" : "Request to be added to the family plan";
+
+  if (step === "details") return <div className="space-y-6"><LoginDetails service={service} /></div>;
+
+  return (
+    <>
+      {step === "choice" && <section>
+        <h2 className="font-display text-base font-semibold lg:text-xl">{choiceTitle}</h2>
+        <p className="mt-3 max-w-[620px] text-sm leading-[22px] text-muted-foreground">Kindly choose an option to submit your details to be added to the family plan.</p>
+        <Button variant="link" className="h-auto px-0 py-0 text-sm font-normal" onClick={() => setLearnOpen(true)}>Learn more</Button>
+        <div className="mt-8 grid max-w-[613px] gap-5 sm:grid-cols-2">
+          <FamilyChoice number="01" onClick={() => { setLastForm("new"); setStep("new"); }}>{youtube ? "Submit a new gmail address details" : "Submit a new email not registered with Spotify"}</FamilyChoice>
+          <FamilyChoice number="02" onClick={() => { setLastForm("current"); setStep("current"); }}>Submit login details to your current {youtube ? "gmail" : "Spotify"} account</FamilyChoice>
+        </div>
+        <p className="mt-8 text-sm leading-[22px] text-muted-foreground lg:ml-[42px]">Not sure of what option to choose? <Link to="/support" className="text-primary">Speak to Support</Link></p>
+      </section>}
+
+      {(step === "new" || step === "current") && <form onSubmit={(event) => { event.preventDefault(); setStep("sent"); }}>
+        <h2 className="font-display text-base font-semibold lg:text-xl">{step === "new" ? "Submit New Login Details" : youtube ? "Submit current Login Details" : "Submit current Spotify login details"}</h2>
+        <p className="mt-3 max-w-[650px] text-sm leading-[22px] text-muted-foreground">{step === "new" ? youtube ? "Kindly submit a new google email address. We will add the gmail to the YouTube family plan." : "Kindly submit a new email address that is not registered on Spotify. We will add the email to the Spotify plan and send your login details via email." : `Kindly submit your current ${youtube ? "YouTube" : "Spotify"} login details to be added to the family plan`}</p>
+        <div className="mt-8 max-w-[650px] space-y-5">
+          <div><Label htmlFor="family-email" className="text-sm font-normal text-muted-foreground">{step === "new" ? "New Email Address" : "Email Address"}</Label><Input id="family-email" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} className="mt-2 h-14 bg-surface px-5 text-base" /></div>
+          <div><Label htmlFor="family-password" className="text-sm font-normal text-muted-foreground">{step === "new" ? "Preferred Password" : "Password"}</Label><Input id="family-password" type="password" required value={password} onChange={(event) => setPassword(event.target.value)} className="mt-2 h-14 bg-surface px-5 text-base" /></div>
+          <Button type="submit" className="h-14 w-full text-base">Submit</Button>
+        </div>
+        <p className="mt-6 text-sm text-muted-foreground lg:ml-[42px]">Encounter any issue? <Link to="/support" className="text-primary">Speak to Support</Link></p>
+      </form>}
+
+      {step === "sent" && <section>
+        <h2 className="font-display text-base font-semibold lg:text-xl">Request Sent</h2>
+        <p className="mt-3 max-w-[739px] text-sm leading-[22px] text-muted-foreground">You have submitted your details successfully. You will be added to the family plan soon and you will get a confirmation email.</p>
+        <div className="mt-8 grid max-w-[420px] gap-4 sm:grid-cols-2"><Button className="h-14 text-base" onClick={() => setStep("details")}>Okay</Button><Button variant="outline" className="h-14 text-base" onClick={() => setStep(lastForm)}>Change details</Button></div>
+      </section>}
+
+      <Dialog open={learnOpen} onOpenChange={setLearnOpen}>
+        <DialogContent className="max-w-[612px] gap-0 p-10 sm:p-14">
+          <DialogHeader><DialogTitle className="font-display text-xl">Why We Need Your {youtube ? "Google" : "Spotify"} Login Details</DialogTitle></DialogHeader>
+          <DialogDescription asChild><div className="mt-5 space-y-4 text-sm leading-[22px] text-foreground">{youtube ? <><p>To provide you with seamless access to YouTube as part of your Bundler subscription, we need to add your Google email to the YouTube family plan.</p><p>This ensures you enjoy uninterrupted access to premium content without needing separate subscriptions.</p><p>You can either:<br />Provide your current Google email and password for us to connect or<br />Share a new Google email that we can add to the family plan.</p><p>Rest assured, your details are handled with the utmost care and privacy, and are only used for setting up your access.</p></> : <><p>To give you premium access to Spotify as part of your Bundler subscription, we need to add your Spotify account to the Spotify family plan. This guarantees your access to ad-free music and premium features without extra fees.</p><p>You can either:<br />Provide your current Spotify login details.<br />Share new login details that we can use to add you to the family plan.</p><p>Your account information will be securely handled and used solely to activate your premium access.</p></>}</div></DialogDescription>
+          <DialogFooter className="mt-8"><Button className="h-14 w-full text-base" onClick={() => setLearnOpen(false)}>Okay</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
+function FamilyChoice({ number, children, onClick }: { number: string; children: React.ReactNode; onClick: () => void }) {
+  return <Button variant="outline" onClick={onClick} className="h-[152px] items-start justify-start whitespace-normal rounded-lg bg-surface p-5 text-left font-normal shadow-none"><span className="flex h-full flex-col items-start"><span className="flex size-8 items-center justify-center rounded-full bg-secondary text-sm font-medium text-foreground">{number}</span><span className="mt-3 max-w-[215px] text-sm leading-[22px] text-muted-foreground">{children}</span></span></Button>;
+}
+
+function ServicePage() {
+  const { serviceId } = Route.useParams();
+  const { state } = useBundler();
+  const service = state.services.find((item) => item.id === (serviceId as ServiceId));
+
+  if (!service) return <AppShell><div className="rounded-lg bg-surface p-8 text-center"><h1 className="font-display text-2xl font-semibold">Service not found</h1><Button asChild className="mt-6"><Link to="/">Return home</Link></Button></div></AppShell>;
+
+  const familyService = service.id === "spotify" || service.id === "youtube-premium";
+  return (
+    <AppShell>
+      <div className="space-y-8">
+        <PageTitle />
+        <div className="space-y-6">
+          {familyService ? <FamilyFlow service={service} /> : <><LoginDetails service={service} />{service.id === "netflix" ? <NetflixVerification /> : <OtpRequest service={service} />}</>}
+        </div>
+      </div>
     </AppShell>
   );
 }
