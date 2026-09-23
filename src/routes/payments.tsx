@@ -1,20 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Download, Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { CreditCard, Download } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell, PageHeading } from "@/components/bundler/AppShell";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { formatDate, useBundler, type Payment } from "@/lib/bundler-store";
-import { cn } from "@/lib/utils";
+import { formatDate, useBundler } from "@/lib/bundler-store";
 
 export const Route = createFileRoute("/payments")({
   head: () => ({
@@ -37,13 +27,7 @@ export const Route = createFileRoute("/payments")({
   component: PaymentsPage,
 });
 
-const statusStyles: Record<Payment["status"], string> = {
-  paid: "bg-success/15 text-success",
-  pending: "bg-warning/25 text-warning-foreground",
-  failed: "bg-destructive/15 text-destructive",
-};
-
-function downloadCsv(rows: Payment[], filename: string) {
+function downloadCsv(rows: ReturnType<typeof useBundler>["state"]["payments"], filename: string) {
   const header = "Invoice,Date,Description,Amount,Method,Status";
   const body = rows
     .map((r) => [r.id, formatDate(r.date), r.description, `$${r.amount}`, r.method, r.status].join(","))
@@ -59,117 +43,25 @@ function downloadCsv(rows: Payment[], filename: string) {
 
 function PaymentsPage() {
   const { state } = useBundler();
-  const [query, setQuery] = useState("");
-  const [status, setStatus] = useState<"all" | Payment["status"]>("all");
-
-  const rows = useMemo(
-    () =>
-      state.payments.filter((p) => {
-        const matchQuery = `${p.id} ${p.description} ${p.method}`
-          .toLowerCase()
-          .includes(query.toLowerCase());
-        return matchQuery && (status === "all" || p.status === status);
-      }),
-    [state.payments, query, status],
-  );
-
-  const totalPaid = state.payments
-    .filter((p) => p.status === "paid")
-    .reduce((sum, p) => sum + p.amount, 0);
-
   return (
     <AppShell>
-      <PageHeading title="Payment History" subtitle="Every charge on your Bundler account." />
-
-      <div className="grid gap-4 sm:grid-cols-3">
-        {[
-          { label: "Total paid", value: `$${totalPaid}` },
-          { label: "Invoices", value: String(state.payments.length) },
-          {
-            label: "Failed charges",
-            value: String(state.payments.filter((p) => p.status === "failed").length),
-          },
-        ].map((s) => (
-          <div key={s.label} className="panel p-5">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">
-              {s.label}
-            </p>
-            <p className="mt-1 font-display text-2xl font-semibold">{s.value}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-6 flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-56">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            className="pl-9"
-            placeholder="Search invoices"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
+      <PageHeading title="Payment History" />
+      <section className="panel overflow-hidden p-4 sm:p-6">
+        <div className="hidden grid-cols-[1.7fr_1fr_.55fr_1.05fr_.7fr] border-b bg-secondary text-sm font-medium sm:grid">
+          {['Description','Date issued','Price','Payment type','Receipt'].map(x => <div key={x} className="px-6 py-4">{x}</div>)}
         </div>
-        <Select value={status} onValueChange={(v) => setStatus(v as typeof status)}>
-          <SelectTrigger className="w-40">
-            <SelectValue placeholder="All statuses">
-              {status === "all" ? "All statuses" : status[0]!.toUpperCase() + status.slice(1)}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All statuses</SelectItem>
-            <SelectItem value="paid">Paid</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="failed">Failed</SelectItem>
-          </SelectContent>
-        </Select>
-        <Button
-          variant="outline"
-          className="gap-2"
-          onClick={() => {
-            downloadCsv(rows, "bundler-payments.csv");
-            toast.success("Export started");
-          }}
-        >
-          <Download className="size-4" /> Export CSV
-        </Button>
-      </div>
-
-      <section className="panel mt-4 divide-y overflow-hidden">
-        {rows.length === 0 && (
-          <p className="px-5 py-10 text-center text-sm text-muted-foreground">
-            No invoices match your filters.
-          </p>
-        )}
-        {rows.map((p) => (
-          <div key={p.id} className="flex flex-wrap items-center gap-3 px-5 py-4">
-            <div className="min-w-44 flex-1">
-              <p className="font-bold">{p.description}</p>
-              <p className="text-xs text-muted-foreground">
-                {p.id} · {formatDate(p.date)} · {p.method}
-              </p>
+        <div className="divide-y">
+          {state.payments.map((p) => (
+            <div key={p.id} className="grid gap-2 py-4 text-sm sm:grid-cols-[1.7fr_1fr_.55fr_1.05fr_.7fr] sm:items-center sm:gap-0 sm:py-0">
+              <div className="font-medium text-muted-foreground sm:px-6 sm:py-4">{p.description}</div>
+              <div className="text-muted-foreground sm:px-6 sm:py-4">{formatDate(p.date)}</div>
+              <div className="font-medium text-muted-foreground sm:px-6 sm:py-4">${p.amount}</div>
+              <div className="flex items-center gap-2 text-muted-foreground sm:px-6 sm:py-4"><CreditCard className="size-4" />•••• {p.method.slice(-4)}</div>
+              <Button variant="ghost" className="h-auto justify-start px-0 text-muted-foreground sm:justify-center sm:px-6 sm:py-4" onClick={() => { downloadCsv([p], `${p.id}.csv`); toast.success(`${p.id} downloaded`); }}>View details</Button>
             </div>
-            <span
-              className={cn(
-                "rounded-full px-2.5 py-1 text-xs font-bold capitalize",
-                statusStyles[p.status],
-              )}
-            >
-              {p.status}
-            </span>
-            <p className="w-20 text-right font-semibold">${p.amount}</p>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label={`Download invoice ${p.id}`}
-              onClick={() => {
-                downloadCsv([p], `${p.id}.csv`);
-                toast.success(`${p.id} downloaded`);
-              }}
-            >
-              <Download className="size-4" />
-            </Button>
-          </div>
-        ))}
+          ))}
+        </div>
+        <Button variant="outline" className="mt-6 gap-2" onClick={() => downloadCsv(state.payments, "bundler-payments.csv")}><Download className="size-4" /> Export CSV</Button>
       </section>
     </AppShell>
   );

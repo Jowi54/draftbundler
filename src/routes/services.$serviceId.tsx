@@ -1,11 +1,13 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Check, Copy, Eye, EyeOff, RefreshCw, ShieldCheck } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowLeft, ArrowRight, Check, Copy, Eye, EyeOff, RefreshCw, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/bundler/AppShell";
 import { ServiceLogo } from "@/components/bundler/ServiceLogo";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useBundler, type ServiceId } from "@/lib/bundler-store";
 
 export const Route = createFileRoute("/services/$serviceId")({
@@ -82,17 +84,58 @@ function ServicePage() {
   const { state, generateOtp } = useBundler();
   const service = state.services.find((s) => s.id === (serviceId as ServiceId));
   const [now, setNow] = useState(Date.now());
+  const familyService = serviceId === "spotify" || serviceId === "youtube-premium";
+  const [familyStep, setFamilyStep] = useState<"choice" | "new" | "current" | "sent" | "details">("choice");
+  const [familyEmail, setFamilyEmail] = useState("");
+  const [familyPassword, setFamilyPassword] = useState("");
 
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, []);
 
-  if (!service) throw notFound();
+  if (!service) {
+    return (
+      <AppShell>
+        <div className="panel mx-auto max-w-lg p-8 text-center">
+          <h1 className="font-display text-2xl font-semibold">Service not found</h1>
+          <p className="mt-2 text-sm text-muted-foreground">This streaming service is not included in your bundle.</p>
+          <Button asChild className="mt-6"><Link to="/">Return home</Link></Button>
+        </div>
+      </AppShell>
+    );
+  }
 
   const otp = state.otps[service.id];
   const secondsLeft = otp ? Math.max(0, Math.ceil((otp.expiresAt - now) / 1000)) : 0;
   const otpValid = Boolean(otp) && secondsLeft > 0;
+
+  if (familyService && familyStep !== "details") {
+    const youtube = serviceId === "youtube-premium";
+    return (
+      <AppShell>
+        <h1 className="font-display text-[26px] font-semibold">Get Sign-in Details</h1>
+        <section className="mt-8 max-w-[700px]">
+          {familyStep === "choice" && <>
+            <h2 className="font-display text-xl font-semibold">Request to be added to {youtube ? "YouTube " : "the "}family plan</h2>
+            <p className="mt-3 text-sm text-muted-foreground">Kindly choose an option to submit your details to be added to the family plan. <button className="font-semibold text-primary">Learn more</button></p>
+            <div className="mt-8 grid gap-5 sm:grid-cols-2">
+              <button onClick={() => setFamilyStep("new")} className="panel group min-h-44 p-6 text-left ring-1 ring-border transition hover:ring-primary"><span className="flex size-8 items-center justify-center rounded-full bg-secondary text-sm font-semibold">01</span><p className="mt-5 text-sm text-muted-foreground">Submit a new {youtube ? "gmail" : "email"} not registered with {youtube ? "YouTube" : "Spotify"}</p><ArrowRight className="ml-auto mt-4 size-5 text-primary" /></button>
+              <button onClick={() => setFamilyStep("current")} className="panel group min-h-44 p-6 text-left ring-1 ring-border transition hover:ring-primary"><span className="flex size-8 items-center justify-center rounded-full bg-secondary text-sm font-semibold">02</span><p className="mt-5 text-sm text-muted-foreground">Submit login details to your current {youtube ? "gmail" : "Spotify"} account</p><ArrowRight className="ml-auto mt-4 size-5 text-primary" /></button>
+            </div>
+            <p className="mt-8 text-sm text-muted-foreground">Not sure of what option to choose? <Link to="/support" className="font-semibold text-primary">Speak to Support</Link></p>
+          </>}
+          {(familyStep === "new" || familyStep === "current") && <form className="panel p-6 sm:p-10" onSubmit={(e) => { e.preventDefault(); setFamilyStep("sent"); }}>
+            <h2 className="font-display text-xl font-semibold">{familyStep === "new" ? "Submit New Login Details" : `Submit current ${youtube ? "YouTube" : "Spotify"} login details`}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">Kindly submit {familyStep === "new" ? `a new ${youtube ? "Google" : "email"} address` : "your current login details"} to be added to the family plan.</p>
+            <div className="mt-6 space-y-4"><div><Label htmlFor="family-email">{familyStep === "new" ? "New Email Address" : "Email Address"}</Label><Input id="family-email" type="email" required value={familyEmail} onChange={e => setFamilyEmail(e.target.value)} /></div><div><Label htmlFor="family-password">{familyStep === "new" ? "Preferred Password" : "Password"}</Label><Input id="family-password" type="password" required value={familyPassword} onChange={e => setFamilyPassword(e.target.value)} /></div></div>
+            <div className="mt-6 flex gap-3"><Button type="button" variant="outline" onClick={() => setFamilyStep("choice")}>Back</Button><Button type="submit">Submit</Button></div>
+          </form>}
+          {familyStep === "sent" && <div className="panel p-8 text-center sm:p-12"><span className="mx-auto flex size-12 items-center justify-center rounded-full bg-success/15 text-success"><Check /></span><h2 className="mt-5 font-display text-xl font-semibold">Request Sent</h2><p className="mx-auto mt-3 max-w-lg text-sm text-muted-foreground">You have submitted your details successfully. You will be added to the family plan soon and you will get a confirmation email.</p><div className="mt-6 flex justify-center gap-3"><Button variant="outline" onClick={() => setFamilyStep("current")}>Change Details</Button><Button onClick={() => setFamilyStep("details")}>Okay</Button></div></div>}
+        </section>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell>

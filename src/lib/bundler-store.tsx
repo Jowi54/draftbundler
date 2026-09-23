@@ -95,8 +95,8 @@ export type BundlerState = {
 };
 
 export const PLAN_PRICES: Record<PlanId, { label: string; price: number; cadence: string }> = {
-  monthly: { label: "Bundler Monthly Plan", price: 29, cadence: "month" },
-  annual: { label: "Bundler Annual Plan", price: 168, cadence: "year" },
+  monthly: { label: "Bundler Monthly Plan", price: 30, cadence: "month" },
+  annual: { label: "Bundler Annual Plan", price: 180, cadence: "year" },
 };
 
 const SERVICES: Service[] = [
@@ -223,7 +223,7 @@ const initialState: BundlerState = {
       id: "INV-10428",
       date: "2026-08-14T09:12:00.000Z",
       description: "Bundler Monthly Plan",
-      amount: 29,
+      amount: 30,
       method: "Visa •••• 4242",
       status: "paid",
     },
@@ -231,7 +231,7 @@ const initialState: BundlerState = {
       id: "INV-10311",
       date: "2026-07-14T09:11:00.000Z",
       description: "Bundler Monthly Plan",
-      amount: 29,
+      amount: 30,
       method: "Visa •••• 4242",
       status: "paid",
     },
@@ -239,7 +239,7 @@ const initialState: BundlerState = {
       id: "INV-10197",
       date: "2026-06-14T09:10:00.000Z",
       description: "Bundler Monthly Plan",
-      amount: 29,
+      amount: 30,
       method: "Visa •••• 4242",
       status: "paid",
     },
@@ -247,7 +247,7 @@ const initialState: BundlerState = {
       id: "INV-10066",
       date: "2026-05-14T09:08:00.000Z",
       description: "Bundler Monthly Plan",
-      amount: 29,
+      amount: 30,
       method: "Mastercard •••• 8891",
       status: "failed",
     },
@@ -255,7 +255,7 @@ const initialState: BundlerState = {
       id: "INV-09954",
       date: "2026-04-14T09:07:00.000Z",
       description: "Bundler Monthly Plan",
-      amount: 29,
+      amount: 30,
       method: "Visa •••• 4242",
       status: "paid",
     },

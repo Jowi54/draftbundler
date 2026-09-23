@@ -101,7 +101,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             <span className="flex size-7 items-center justify-center rounded-md bg-mint text-mint-foreground">
               <Headphones className="size-4" />
             </span>
-            <p className="text-sm font-bold">Send us a feedback</p>
+              <p className="text-sm font-semibold">Send us a feedback</p>
           </div>
           <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
             We'd love to hear what feedback you have for us.
@@ -109,7 +109,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           <Link
             to="/support"
             onClick={onNavigate}
-            className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
+            className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
           >
             Get in touch <span aria-hidden>→</span>
           </Link>
@@ -285,7 +285,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background">
-      <aside className="fixed inset-y-0 left-0 hidden w-[264px] border-r border-sidebar-border bg-sidebar lg:block">
+      <aside className="fixed inset-y-0 left-0 hidden w-[280px] border-r border-sidebar-border bg-sidebar lg:block">
         <SidebarContent />
       </aside>
 
@@ -296,9 +296,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         </SheetContent>
       </Sheet>
 
-      <div className="lg:pl-[264px]">
+      <div className="lg:pl-[280px]">
         <TopBar onOpenMenu={() => setMenuOpen(true)} />
-        <main className="mx-auto w-full max-w-[1040px] px-5 pb-24 pt-8 lg:px-10 lg:pt-10">{children}</main>
+        <main className="mx-auto w-full max-w-[908px] px-5 pb-24 pt-8 lg:max-w-[868px] lg:px-0 lg:pt-[27px]">{children}</main>
       </div>
 
       <ContactWidget />
@@ -309,7 +309,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 export function PageHeading({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <div className="mb-6">
-      <h1 className="font-display text-[28px] font-semibold leading-9">{title}</h1>
+      <h1 className="font-display text-[28px] font-semibold leading-9 lg:text-[32px]">{title}</h1>
       {subtitle && <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>}
     </div>
   );

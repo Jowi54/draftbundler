@@ -181,13 +181,13 @@ function Dashboard() {
 
   return (
     <AppShell>
-      <h1 className="mb-6 font-display text-[28px] font-semibold leading-9">
+      <h1 className="mb-6 font-display text-[28px] font-semibold leading-9 lg:text-[32px]">
         Welcome, {displayName}
       </h1>
 
       <Banner />
 
-       <h2 className="mb-4 mt-10 font-display text-xl font-semibold">Current Plan</h2>
+       <h2 className="mb-4 mt-10 font-display text-xl font-semibold"><span className="lg:hidden">Your subscription</span><span className="hidden lg:inline">Current Plan</span></h2>
        <section className="overflow-hidden rounded-lg shadow-[var(--shadow-card)]">
         <div className="flex items-center gap-4 bg-navy px-6 py-6">
           <span className="flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
