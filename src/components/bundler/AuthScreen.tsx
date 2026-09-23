@@ -62,7 +62,7 @@ export function AuthScreen({ mode }: { mode: "signin" | "signup" | "reset" | "pa
           <section className="mt-10 rounded-lg bg-surface px-6 py-9 shadow-[var(--shadow-card)] sm:px-[52px] sm:py-[52px]">
             <h1 className="font-display text-[28px] font-semibold">Welcome to Bundler</h1>
             <p className="mt-2 text-sm text-muted-foreground">To get started. Kindly select a plan to subscribe.</p>
-            <div className="mt-11 grid grid-cols-2 gap-5 text-left">
+            <div className="mt-11 grid gap-5 text-left sm:grid-cols-2">
             {[{ annual: false, name: "Monthly Plan", price: "$30/mo", cadence: "(paid monthly)" }, { annual: true, name: "Yearly Plan", price: "$15/mo", cadence: "(paid yearly)" }].map((plan) => (
               <button key={plan.name} type="button" onClick={() => setAnnual(plan.annual)} className={cn("relative h-[193px] rounded-lg border bg-surface p-4 transition-colors", annual === plan.annual ? "border-primary ring-2 ring-primary/15" : "border-border hover:border-muted-foreground")}> 
                 <span className={cn("absolute right-4 top-4 size-5 rounded-full border", annual === plan.annual && "border-[6px] border-primary")} />
