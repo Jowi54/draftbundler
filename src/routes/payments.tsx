@@ -91,10 +91,10 @@ function PaymentsPage() {
           },
         ].map((s) => (
           <div key={s.label} className="panel p-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-semibold uppercase text-muted-foreground">
               {s.label}
             </p>
-            <p className="mt-1 text-2xl font-extrabold">{s.value}</p>
+            <p className="mt-1 font-display text-2xl font-semibold">{s.value}</p>
           </div>
         ))}
       </div>
@@ -156,7 +156,7 @@ function PaymentsPage() {
             >
               {p.status}
             </span>
-            <p className="w-20 text-right font-extrabold">${p.amount}</p>
+            <p className="w-20 text-right font-semibold">${p.amount}</p>
             <Button
               variant="ghost"
               size="icon"

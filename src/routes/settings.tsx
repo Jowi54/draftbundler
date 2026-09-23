@@ -67,7 +67,7 @@ function SettingsPage() {
       <PageHeading title="Settings" subtitle="Manage your profile, alerts and security." />
 
       <section className="panel p-6">
-        <h2 className="text-base font-extrabold">Profile</h2>
+        <h2 className="font-display text-lg font-semibold">Profile</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div>
             <Label htmlFor="name">Full name</Label>
@@ -165,7 +165,7 @@ function SettingsPage() {
       </section>
 
       <section className="panel mt-6 p-6">
-        <h2 className="text-base font-extrabold text-destructive">Danger zone</h2>
+        <h2 className="font-display text-lg font-semibold text-destructive">Danger zone</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Reset this dashboard back to its original demo data.
         </p>

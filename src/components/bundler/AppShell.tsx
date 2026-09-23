@@ -125,7 +125,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         <button
           onClick={() => {
             toast("Signed out", { description: "You have been logged out of Bundler." });
-            navigate({ to: "/" });
+            navigate({ to: "/sign-in" });
             onNavigate?.();
           }}
           className="flex w-full items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-sidebar-accent/60 hover:text-foreground"
@@ -225,7 +225,7 @@ function TopBar({ onOpenMenu }: { onOpenMenu: () => void }) {
               <Gem /> {state.settings.theme === "dark" ? "Light" : "Dark"} appearance
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => toast("Signed out")}>
+            <DropdownMenuItem onClick={() => navigate({ to: "/sign-in" })}>
               <LogOut /> Logout
             </DropdownMenuItem>
           </DropdownMenuContent>

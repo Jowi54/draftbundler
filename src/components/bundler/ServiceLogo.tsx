@@ -12,7 +12,7 @@ export function ServiceLogo({
     <span
       aria-hidden
       className={cn(
-        "flex size-11 shrink-0 items-center justify-center rounded-xl text-sm font-extrabold ring-1 ring-black/5",
+        "flex size-11 shrink-0 items-center justify-center rounded-lg text-sm font-bold ring-1 ring-border",
         className,
       )}
       style={{ backgroundColor: service.bg, color: service.fg }}
