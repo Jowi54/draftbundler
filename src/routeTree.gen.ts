@@ -10,9 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ChoosePlanRouteImport } from './routes/choose-plan'
+import { Route as CreateAccountRouteImport } from './routes/create-account'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as NewPasswordRouteImport } from './routes/new-password'
 import { Route as PaymentsRouteImport } from './routes/payments'
 import { Route as ReferRouteImport } from './routes/refer'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as ServicesServiceIdRouteImport } from './routes/services.$serviceId'
@@ -20,6 +25,26 @@ import { Route as ServicesServiceIdRouteImport } from './routes/services.$servic
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChoosePlanRoute = ChoosePlanRouteImport.update({
+  id: '/choose-plan',
+  path: '/choose-plan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreateAccountRoute = CreateAccountRouteImport.update({
+  id: '/create-account',
+  path: '/create-account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewPasswordRoute = NewPasswordRouteImport.update({
+  id: '/new-password',
+  path: '/new-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaymentsRoute = PaymentsRouteImport.update({
@@ -35,6 +60,11 @@ const ReferRoute = ReferRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SubscriptionRoute = SubscriptionRouteImport.update({
@@ -55,18 +85,28 @@ const ServicesServiceIdRoute = ServicesServiceIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/choose-plan': typeof ChoosePlanRoute
+  '/create-account': typeof CreateAccountRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/new-password': typeof NewPasswordRoute
   '/payments': typeof PaymentsRoute
   '/refer': typeof ReferRoute
   '/settings': typeof SettingsRoute
+  '/sign-in': typeof SignInRoute
   '/subscription': typeof SubscriptionRoute
   '/support': typeof SupportRoute
   '/services/$serviceId': typeof ServicesServiceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/choose-plan': typeof ChoosePlanRoute
+  '/create-account': typeof CreateAccountRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/new-password': typeof NewPasswordRoute
   '/payments': typeof PaymentsRoute
   '/refer': typeof ReferRoute
   '/settings': typeof SettingsRoute
+  '/sign-in': typeof SignInRoute
   '/subscription': typeof SubscriptionRoute
   '/support': typeof SupportRoute
   '/services/$serviceId': typeof ServicesServiceIdRoute
@@ -74,9 +114,14 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/choose-plan': typeof ChoosePlanRoute
+  '/create-account': typeof CreateAccountRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/new-password': typeof NewPasswordRoute
   '/payments': typeof PaymentsRoute
   '/refer': typeof ReferRoute
   '/settings': typeof SettingsRoute
+  '/sign-in': typeof SignInRoute
   '/subscription': typeof SubscriptionRoute
   '/support': typeof SupportRoute
   '/services/$serviceId': typeof ServicesServiceIdRoute
@@ -85,27 +130,42 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/choose-plan'
+    | '/create-account'
+    | '/forgot-password'
+    | '/new-password'
     | '/payments'
     | '/refer'
     | '/settings'
+    | '/sign-in'
     | '/subscription'
     | '/support'
     | '/services/$serviceId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/choose-plan'
+    | '/create-account'
+    | '/forgot-password'
+    | '/new-password'
     | '/payments'
     | '/refer'
     | '/settings'
+    | '/sign-in'
     | '/subscription'
     | '/support'
     | '/services/$serviceId'
   id:
     | '__root__'
     | '/'
+    | '/choose-plan'
+    | '/create-account'
+    | '/forgot-password'
+    | '/new-password'
     | '/payments'
     | '/refer'
     | '/settings'
+    | '/sign-in'
     | '/subscription'
     | '/support'
     | '/services/$serviceId'
@@ -113,9 +173,14 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChoosePlanRoute: typeof ChoosePlanRoute
+  CreateAccountRoute: typeof CreateAccountRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  NewPasswordRoute: typeof NewPasswordRoute
   PaymentsRoute: typeof PaymentsRoute
   ReferRoute: typeof ReferRoute
   SettingsRoute: typeof SettingsRoute
+  SignInRoute: typeof SignInRoute
   SubscriptionRoute: typeof SubscriptionRoute
   SupportRoute: typeof SupportRoute
   ServicesServiceIdRoute: typeof ServicesServiceIdRoute
@@ -128,6 +193,34 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/choose-plan': {
+      id: '/choose-plan'
+      path: '/choose-plan'
+      fullPath: '/choose-plan'
+      preLoaderRoute: typeof ChoosePlanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/create-account': {
+      id: '/create-account'
+      path: '/create-account'
+      fullPath: '/create-account'
+      preLoaderRoute: typeof CreateAccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/new-password': {
+      id: '/new-password'
+      path: '/new-password'
+      fullPath: '/new-password'
+      preLoaderRoute: typeof NewPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/payments': {
@@ -149,6 +242,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/subscription': {
@@ -177,9 +277,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChoosePlanRoute: ChoosePlanRoute,
+  CreateAccountRoute: CreateAccountRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  NewPasswordRoute: NewPasswordRoute,
   PaymentsRoute: PaymentsRoute,
   ReferRoute: ReferRoute,
   SettingsRoute: SettingsRoute,
+  SignInRoute: SignInRoute,
   SubscriptionRoute: SubscriptionRoute,
   SupportRoute: SupportRoute,
   ServicesServiceIdRoute: ServicesServiceIdRoute,
