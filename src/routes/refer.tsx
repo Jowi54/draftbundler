@@ -59,10 +59,10 @@ function ReferPage() {
           },
         ].map((s) => (
           <div key={s.label} className="panel p-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-semibold uppercase text-muted-foreground">
               {s.label}
             </p>
-            <p className="mt-1 text-2xl font-extrabold">{s.value}</p>
+            <p className="mt-1 font-display text-2xl font-semibold">{s.value}</p>
           </div>
         ))}
       </div>
@@ -70,7 +70,7 @@ function ReferPage() {
       <section className="panel mt-6 p-6">
         <div className="flex items-center gap-2">
           <Gift className="size-5 text-primary" />
-          <h2 className="text-base font-extrabold">Your referral link</h2>
+          <h2 className="font-display text-lg font-semibold">Your referral link</h2>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           <Input readOnly value={link} className="flex-1 min-w-56 font-mono text-sm" />
@@ -90,7 +90,7 @@ function ReferPage() {
       </section>
 
       <section className="panel mt-6 p-6">
-        <h2 className="text-base font-extrabold">Invite by email</h2>
+        <h2 className="font-display text-lg font-semibold">Invite by email</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <div>
             <Label htmlFor="fname">Friend's name</Label>
@@ -128,7 +128,7 @@ function ReferPage() {
         </Button>
       </section>
 
-      <h2 className="mb-3 mt-9 text-lg font-extrabold">Your referrals</h2>
+      <h2 className="mb-4 mt-10 font-display text-xl font-semibold">Your referrals</h2>
       <section className="panel divide-y overflow-hidden">
         {state.referrals.map((r) => (
           <div key={r.id} className="flex items-center gap-3 px-5 py-4">
@@ -154,7 +154,7 @@ function ReferPage() {
             >
               {r.status}
             </span>
-            <p className="w-14 text-right font-extrabold">${r.reward}</p>
+            <p className="w-14 text-right font-semibold">${r.reward}</p>
           </div>
         ))}
       </section>

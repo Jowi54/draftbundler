@@ -38,7 +38,7 @@ function CopyRow({ label, value, secret }: { label: string; value: string; secre
   return (
     <div className="flex items-center gap-3 px-5 py-4">
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className="text-xs font-semibold uppercase text-muted-foreground">
           {label}
         </p>
         <p className="mt-0.5 truncate font-mono text-sm font-semibold">
@@ -106,7 +106,7 @@ function ServicePage() {
       <div className="mb-6 flex items-center gap-4">
         <ServiceLogo service={service} className="size-14 text-base" />
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">{service.name}</h1>
+          <h1 className="font-display text-[26px] font-semibold leading-9">{service.name}</h1>
           <p className="text-sm text-muted-foreground">{service.tagline}</p>
         </div>
       </div>
@@ -122,7 +122,7 @@ function ServicePage() {
         <section className="panel mt-6 p-6">
           <div className="flex items-center gap-2">
             <ShieldCheck className="size-5 text-primary" />
-            <h2 className="text-lg font-extrabold">One-time sign-in code</h2>
+            <h2 className="font-display text-lg font-semibold">One-time sign-in code</h2>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
             {service.name} sends a verification code to the shared inbox. Generate it here — codes
@@ -135,7 +135,7 @@ function ServicePage() {
                 {otp!.code.split("").map((d, i) => (
                   <span
                     key={i}
-                    className="flex size-12 items-center justify-center rounded-lg bg-secondary text-xl font-extrabold"
+                    className="flex size-12 items-center justify-center rounded-lg bg-secondary text-xl font-semibold"
                   >
                     {d}
                   </span>
@@ -172,7 +172,7 @@ function ServicePage() {
       )}
 
       <section className="panel mt-6 p-6">
-        <h2 className="text-base font-extrabold">House rules</h2>
+        <h2 className="font-display text-lg font-semibold">House rules</h2>
         <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
           <li>• Only use the profile assigned to you — others are reserved for the bundle.</li>
           <li>• Never change the account email, password or payment details.</li>

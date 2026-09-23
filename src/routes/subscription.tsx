@@ -76,7 +76,7 @@ function SubscriptionPage() {
               <Gem className="size-5" />
             </span>
             <div>
-              <p className="text-lg font-extrabold">{PLAN_PRICES[state.plan].label}</p>
+              <p className="text-lg font-semibold">{PLAN_PRICES[state.plan].label}</p>
               <p className="text-sm text-muted-foreground">
                 ${PLAN_PRICES[state.plan].price} / {PLAN_PRICES[state.plan].cadence} · renews{" "}
                 {formatDate(state.renewsAt)}
@@ -96,7 +96,7 @@ function SubscriptionPage() {
           </div>
         </div>
 
-        <div className="mt-5 flex items-center justify-between rounded-xl bg-secondary px-4 py-3">
+        <div className="mt-5 flex items-center justify-between rounded-lg bg-secondary px-4 py-3">
           <div>
             <p className="text-sm font-bold">Auto-renew</p>
             <p className="text-xs text-muted-foreground">
@@ -115,7 +115,7 @@ function SubscriptionPage() {
         </div>
       </section>
 
-      <h2 className="mb-3 mt-9 text-lg font-extrabold">Choose your plan</h2>
+      <h2 className="mb-4 mt-10 font-display text-xl font-semibold">Choose your plan</h2>
       <div className="grid gap-4 sm:grid-cols-2">
         {(Object.keys(PLAN_PRICES) as PlanId[]).map((id) => {
           const p = PLAN_PRICES[id];
@@ -133,8 +133,8 @@ function SubscriptionPage() {
                   Save $180
                 </span>
               )}
-              <p className="font-extrabold">{p.label}</p>
-              <p className="mt-2 text-3xl font-extrabold">
+              <p className="font-semibold">{p.label}</p>
+              <p className="mt-2 font-display text-3xl font-semibold">
                 ${p.price}
                 <span className="text-sm font-semibold text-muted-foreground">/{p.cadence}</span>
               </p>
@@ -158,7 +158,7 @@ function SubscriptionPage() {
         })}
       </div>
 
-      <h2 className="mb-3 mt-9 text-lg font-extrabold" id="methods">
+      <h2 className="mb-4 mt-10 font-display text-xl font-semibold" id="methods">
         Payment methods
       </h2>
       <section className={cn("panel divide-y overflow-hidden", search.methods && "ring-2 ring-primary")}>

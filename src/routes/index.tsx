@@ -83,13 +83,13 @@ function Banner() {
   const slide = slides[index]!;
 
   return (
-    <section className="relative overflow-hidden rounded-2xl bg-mint">
-      <div className="relative z-10 max-w-lg px-6 py-7 sm:px-8">
-        <h2 className="text-xl font-extrabold text-mint-foreground sm:text-[1.4rem]">
+    <section className="relative min-h-[260px] overflow-hidden rounded-lg bg-mint">
+      <div className="relative z-10 max-w-[560px] px-7 py-8 sm:px-9 sm:py-10">
+        <h2 className="font-display text-[26px] font-semibold leading-9 text-mint-foreground">
           {slide.title.replace("$10", "")}
           {slide.title.includes("$10") && <span className="text-success">$10</span>}
         </h2>
-        <p className="mt-2 max-w-md text-sm leading-relaxed text-mint-foreground/80">
+        <p className="mt-2 max-w-md text-sm leading-6 text-mint-foreground/80">
           {slide.body}
         </p>
         <Button asChild variant="secondary" className="mt-4 gap-2 bg-surface hover:bg-surface/90">
@@ -134,7 +134,7 @@ function Banner() {
         alt="Two friends sharing a Bundler referral link on their phones"
         width={992}
         height={672}
-        className="pointer-events-none absolute bottom-0 right-0 hidden h-full w-[38%] object-cover object-left mix-blend-multiply lg:block"
+       className="pointer-events-none absolute bottom-0 right-0 hidden h-full w-[42%] object-cover object-center lg:block"
       />
     </section>
   );
@@ -181,20 +181,20 @@ function Dashboard() {
 
   return (
     <AppShell>
-      <h1 className="mb-5 text-3xl font-extrabold tracking-tight lg:text-[2.3rem]">
+      <h1 className="mb-6 font-display text-[28px] font-semibold leading-9">
         Welcome, {displayName}
       </h1>
 
       <Banner />
 
-      <h2 className="mb-3 mt-9 text-lg font-extrabold">Current Plan</h2>
-      <section className="overflow-hidden rounded-2xl shadow-[var(--shadow-card)]">
+       <h2 className="mb-4 mt-10 font-display text-xl font-semibold">Current Plan</h2>
+       <section className="overflow-hidden rounded-lg shadow-[var(--shadow-card)]">
         <div className="flex items-center gap-4 bg-navy px-6 py-6">
           <span className="flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <Gem className="size-5" />
           </span>
           <div>
-            <p className="text-lg font-extrabold text-navy-foreground">{plan.label}</p>
+           <p className="text-lg font-semibold text-navy-foreground">{plan.label}</p>
             <p className="text-sm text-navy-foreground/70">
               Member since{" "}
               <span className="font-semibold text-primary-foreground">
@@ -217,7 +217,7 @@ function Dashboard() {
         </div>
       </section>
 
-      <h2 className="mb-3 mt-9 text-lg font-extrabold">Get your sign-In details</h2>
+       <h2 className="mb-4 mt-10 font-display text-xl font-semibold">Get your sign-In details</h2>
       <section className="panel divide-y overflow-hidden">
         {state.services.map((s) => (
           <Link
@@ -228,7 +228,7 @@ function Dashboard() {
           >
             <ServiceLogo service={s} />
             <div className="min-w-0">
-              <p className="font-bold">{s.name}</p>
+               <p className="font-semibold">{s.name}</p>
               <p className="truncate text-sm text-muted-foreground">{s.tagline}</p>
             </div>
             <ArrowRight className="ml-auto size-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-foreground" />
@@ -236,7 +236,7 @@ function Dashboard() {
         ))}
       </section>
 
-      <h2 className="mb-3 mt-9 text-lg font-extrabold">Quick Actions</h2>
+       <h2 className="mb-4 mt-10 font-display text-xl font-semibold">Quick Actions</h2>
       <section className="panel divide-y overflow-hidden">
         {quickActions.map((a) => (
           <button

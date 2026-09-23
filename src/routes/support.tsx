@@ -76,7 +76,7 @@ function SupportPage() {
               <c.icon className="size-5" />
             </span>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <p className="text-xs font-semibold uppercase text-muted-foreground">
                 {c.label}
               </p>
               <p className="font-bold">{c.value}</p>
@@ -86,7 +86,7 @@ function SupportPage() {
       </div>
 
       <section className="panel mt-6 p-6">
-        <h2 className="text-base font-extrabold">Send us a message</h2>
+        <h2 className="font-display text-lg font-semibold">Send us a message</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Replying to <span className="font-semibold text-foreground">{state.settings.email}</span>
         </p>
@@ -127,7 +127,7 @@ function SupportPage() {
         </Button>
       </section>
 
-      <h2 className="mb-3 mt-9 text-lg font-extrabold">Frequently asked</h2>
+      <h2 className="mb-4 mt-10 font-display text-xl font-semibold">Frequently asked</h2>
       <section className="panel px-6 py-2">
         <Accordion type="single" collapsible>
           {faqs.map((f) => (

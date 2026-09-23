@@ -42,10 +42,10 @@ const navItems = [
 function BundlerMark() {
   return (
     <Link to="/" className="flex items-center gap-2.5">
-      <span className="flex size-7 items-center justify-center rounded-md bg-foreground">
+      <span className="flex size-8 items-center justify-center rounded-lg bg-foreground">
         <span className="size-2.5 rounded-[3px] bg-background" />
       </span>
-      <span className="text-xl font-extrabold tracking-tight">Bundler</span>
+      <span className="font-display text-[22px] font-semibold">Bundler</span>
     </Link>
   );
 }
@@ -57,11 +57,11 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex h-20 items-center border-b border-sidebar-border px-6">
+      <div className="flex h-20 items-center border-b border-sidebar-border px-7">
         <BundlerMark />
       </div>
 
-      <nav className="flex flex-col gap-1 px-4 py-5">
+      <nav className="flex flex-col gap-1 px-4 py-6">
         {navItems.map((item) => {
           const active = pathname === item.to;
           return (
@@ -70,7 +70,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               to={item.to}
               onClick={onNavigate}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm font-semibold transition-colors",
+                "flex items-center gap-3 rounded-lg px-3.5 py-3 text-sm font-medium transition-colors",
                 active
                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
                   : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
@@ -95,8 +95,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         </Link>
       </nav>
 
-      <div className="mt-auto space-y-4 px-4 pb-6">
-        <div className="rounded-xl bg-mint/40 p-4">
+      <div className="mt-auto space-y-4 px-4 pb-7">
+        <div className="rounded-lg bg-mint p-4">
           <div className="flex items-center gap-2">
             <span className="flex size-7 items-center justify-center rounded-md bg-mint text-mint-foreground">
               <Headphones className="size-4" />
@@ -125,7 +125,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         <button
           onClick={() => {
             toast("Signed out", { description: "You have been logged out of Bundler." });
-            navigate({ to: "/" });
+            navigate({ to: "/sign-in" });
             onNavigate?.();
           }}
           className="flex w-full items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-sidebar-accent/60 hover:text-foreground"
@@ -143,7 +143,7 @@ function TopBar({ onOpenMenu }: { onOpenMenu: () => void }) {
   const navigate = useNavigate();
 
   return (
-    <header className="flex items-center justify-between gap-4 px-5 py-5 lg:px-10">
+    <header className="flex h-20 items-center justify-between gap-4 border-b border-border bg-surface px-5 lg:px-10">
       <Button
         variant="ghost"
         size="icon"
@@ -225,7 +225,7 @@ function TopBar({ onOpenMenu }: { onOpenMenu: () => void }) {
               <Gem /> {state.settings.theme === "dark" ? "Light" : "Dark"} appearance
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => toast("Signed out")}>
+            <DropdownMenuItem onClick={() => navigate({ to: "/sign-in" })}>
               <LogOut /> Logout
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -285,7 +285,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background">
-      <aside className="fixed inset-y-0 left-0 hidden w-72 border-r border-sidebar-border bg-sidebar lg:block">
+      <aside className="fixed inset-y-0 left-0 hidden w-[264px] border-r border-sidebar-border bg-sidebar lg:block">
         <SidebarContent />
       </aside>
 
@@ -296,9 +296,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         </SheetContent>
       </Sheet>
 
-      <div className="lg:pl-72">
+      <div className="lg:pl-[264px]">
         <TopBar onOpenMenu={() => setMenuOpen(true)} />
-        <main className="mx-auto w-full max-w-4xl px-5 pb-24 lg:px-10">{children}</main>
+        <main className="mx-auto w-full max-w-[1040px] px-5 pb-24 pt-8 lg:px-10 lg:pt-10">{children}</main>
       </div>
 
       <ContactWidget />
@@ -309,7 +309,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 export function PageHeading({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
     <div className="mb-6">
-      <h1 className="text-3xl font-extrabold tracking-tight lg:text-[2.1rem]">{title}</h1>
+      <h1 className="font-display text-[28px] font-semibold leading-9">{title}</h1>
       {subtitle && <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>}
     </div>
   );
