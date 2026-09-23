@@ -29,6 +29,15 @@ export const Route = createFileRoute("/services/$serviceId")({
     };
   },
   component: ServicePage,
+  notFoundComponent: () => (
+    <AppShell>
+      <div className="panel mx-auto max-w-lg p-8 text-center">
+        <h1 className="font-display text-2xl font-semibold">Service not found</h1>
+        <p className="mt-2 text-sm text-muted-foreground">This streaming service is not included in your bundle.</p>
+        <Button asChild className="mt-6"><Link to="/">Return home</Link></Button>
+      </div>
+    </AppShell>
+  ),
 });
 
 function CopyRow({ label, value, secret }: { label: string; value: string; secret?: boolean }) {

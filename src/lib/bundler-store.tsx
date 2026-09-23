@@ -95,8 +95,8 @@ export type BundlerState = {
 };
 
 export const PLAN_PRICES: Record<PlanId, { label: string; price: number; cadence: string }> = {
-  monthly: { label: "Bundler Monthly Plan", price: 29, cadence: "month" },
-  annual: { label: "Bundler Annual Plan", price: 168, cadence: "year" },
+  monthly: { label: "Bundler Monthly Plan", price: 30, cadence: "month" },
+  annual: { label: "Bundler Annual Plan", price: 180, cadence: "year" },
 };
 
 const SERVICES: Service[] = [
