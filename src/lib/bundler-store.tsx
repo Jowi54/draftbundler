@@ -353,6 +353,7 @@ const BundlerContext = createContext<Ctx | null>(null);
 export function BundlerProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<BundlerState>(initialState);
   const [hydrated, setHydrated] = useState(false);
+  const [clock, setClock] = useState<number | null>(null);
 
   useEffect(() => {
     try {
@@ -365,7 +366,14 @@ export function BundlerProvider({ children }: { children: ReactNode }) {
       /* ignore */
     }
     setHydrated(true);
+    setClock(Date.now());
   }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const timer = window.setInterval(() => setClock(Date.now()), 60_000);
+    return () => window.clearInterval(timer);
+  }, [hydrated]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -390,10 +398,9 @@ export function BundlerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<Ctx>(() => {
-    const days = Math.max(
-      0,
-      Math.ceil((new Date(state.renewsAt).getTime() - Date.now()) / 86_400_000),
-    );
+    const days = clock === null
+      ? 23
+      : Math.max(0, Math.ceil((new Date(state.renewsAt).getTime() - clock) / 86_400_000));
     const parts = state.settings.fullName.trim().split(/\s+/);
     const displayName = parts.length > 1 ? `${parts[0]} ${parts[1]![0]}.` : parts[0]!;
     const initials = (parts[0]![0]! + (parts[1]?.[0] ?? "")).toUpperCase();
@@ -488,7 +495,7 @@ export function BundlerProvider({ children }: { children: ReactNode }) {
         })),
       reset: () => setState(initialState),
     };
-  }, [state, update, updateSettings]);
+  }, [state, update, updateSettings, clock]);
 
   return <BundlerContext.Provider value={value}>{children}</BundlerContext.Provider>;
 }
