@@ -84,7 +84,7 @@ export function AuthScreen({ mode }: { mode: "signin" | "signup" | "reset" | "pa
 
   const copy = {
     signin: ["Sign in to Bundler", "Sign in with your email address and password"],
-    signup: ["Create an account", "Enter your details to get started with Bundler"],
+    signup: ["Create an account", "Kindly enter your personal details to create an account"],
     reset: ["Reset Password", "Enter your email address to reset password"],
     password: ["Reset Password", "Enter your email address to reset password"],
   }[mode];
